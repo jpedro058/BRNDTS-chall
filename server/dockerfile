@@ -1,11 +1,27 @@
 # Usar a imagem oficial do Node.js como base
-FROM node:18
+FROM arm64v8/node:18
 
 # Diretório de trabalho dentro do container
 WORKDIR /app
 
 # Copiar package.json e package-lock.json (se existir) para o container
 COPY package*.json ./
+
+# Instalar dependências do sistema para o Chromium funcionar
+RUN apt-get update && apt-get install -y \
+    wget \
+    ca-certificates \
+    fonts-liberation \
+    libappindicator3-1 \
+    libasound2 \
+    libx11-xcb1 \
+    libnss3 \
+    libx11-xcb1 \
+    libxtst6 \
+    xdg-utils \
+    chromium \
+    chromium-driver \
+    --no-install-recommends
 
 # Instalar as dependências do projeto
 RUN npm install
