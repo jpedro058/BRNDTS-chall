@@ -23,17 +23,23 @@ const App = () => {
 
     // Treat incoming messages
     wsClient.onmessage = (event) => {
-      const message = event.data;
-      if (message instanceof Blob) {
-        // If the message is a frame, create a URL for it
-        const url = URL.createObjectURL(message);
-        setFrames((prevFrames) => [...prevFrames, url]);
-      } else {
-        // If the message is a text, add it to the chat
+      const message = JSON.parse(event.data);
+      if (message.error) {
         setMessages((prevMessages) => [
           ...prevMessages,
-          { text: message, fromServer: true },
+          { text: message.error, fromServer: true },
         ]);
+      } else if (message.message) {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { text: message.message, fromServer: true },
+        ]);
+      } else if (message.frames) {
+        setFrames(
+          message.frames
+            .map((frame) => `data:image/png;base64,${frame}`)
+            .reverse()
+        );
       }
     };
 
@@ -78,6 +84,8 @@ const App = () => {
     }
   };
 
+  console.log(messages);
+
   return (
     <div className="min-h-screen bg-gray-100 text-gray-800 flex flex-col items-center justify-center py-8 px-4">
       <div className="max-w-4xl w-full bg-white shadow-lg rounded-lg p-6 space-y-4">
@@ -113,6 +121,7 @@ const App = () => {
           >
             {messages.map((msg, index) => (
               <div
+                // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                 key={index}
                 className={`flex ${
                   msg.fromServer ? "justify-start" : "justify-end"
@@ -144,7 +153,7 @@ const App = () => {
           <div className="grid grid-cols-3 gap-4">
             {frames.map((frameUrl, index) => (
               <img
-                key={index}
+                key={frameUrl}
                 src={frameUrl}
                 alt={`Frame ${index}`}
                 className="w-full h-auto rounded-lg shadow-md"

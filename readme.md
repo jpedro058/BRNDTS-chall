@@ -14,9 +14,9 @@ Este repositório contém tanto o backend quanto o frontend de uma aplicação q
 
 ### Frontend
 
-- **Puppeteer** (para controlo do navegador e captura de frames)
+- **ReactJS**
 - **WebSocket (`ws`)**
-- **Node.js**
+- **Tailwind CSS**
 
 ### 📦 Instalação
 
@@ -46,30 +46,37 @@ npm start
 
 ```bash
 cd web
-npm start
+npm run dev
 ```
 
 ### Testar a Aplicação
 
-- Use o Postman para conectar a "ws://localhost:8080" e enviar frames de vídeo em formato base64 ou Buffer, para ver os frames armazenados envie uma mensagem com o texto "getFrames" e o backend retornará os frames armazenados.
-- Ou use o frontend para capturar frames de um vídeo e enviar via WebSocket.
+- Use o Postman para conectar a "ws://localhost:8080" e enviar uma mensagem com o formato JSON do tipo { action: "startCapture"} para iniciar a captura de frames, ou { action: "stopCapture"} para parar.
+- Use o Postman para retornar os frames armazenados no MongoDB, enviando também uma mensagem com o formato JSON do tipo { action: "getFrames"}.
+- Ou acesse a página web gerada pelo frontend para realizar as mesmas ações de forma mais visual.
 
 ## 📋 Como Funciona
 
 ### 1. **Frontend**
 
-- **Puppeteer** é usado para controlar a página web e capturar frames de um vídeo hospedado numa URL.
-- O vídeo é carregado, e o Puppeteer captura um frame a cada segundo, enviando-o ao backend através de uma conexão WebSocket.
+- O utilizador pode iniciar e parar a captura de frames através da interface.
+- Quando a captura é iniciada, o frontend envia uma mensagem via WebSocket para o backend.
+- O frontend também pode solicitar todos os frames armazenados, que são enviados pelo backend através do WebSocket.
+- Um sistema de logs em tempo real exibe mensagens de status para o utilizador.
 
 ### 2. **Backend (Armazenamento no MongoDB)**
 
+- O backend utiliza o Puppeteer para abrir uma página que contém um vídeo e capturar frames periodicamente.
 - O backend recebe os frames via WebSocket.
 - Cada frame é armazenado na base de dados **MongoDB**.
-- Os frames são salvo guardados como objetos binários (Buffer).
-- O backend também possui um endpoint para retornar todos os frames armazenados, para validar o armazenamento.
+- Os frames são guardados como objetos binários (Buffer).
+- O backend fornece uma funcionalidade para recuperar todos os frames guardados e enviá-los ao cliente via WebSocket.
+- O WebSocket gere a comunicação entre frontend e backend, garantindo que os comandos e os dados sejam geridos corretamente.
 
 ## 💡 Considerações Finais
 
+- **WebSocket** foi escolhido para a comunicação entre frontend e backend devido à sua baixa latência e facilidade de uso.
 - **MongoDB** foi escolhido para armazenar os frames devido à sua escalabilidade e facilidade de manipulação de dados binários.
 - **Docker** facilita a configuração e execução do projeto em diferentes ambientes, garantindo consistência entre desenvolvimento e produção.
 - **Puppeteer** de entre outras ferramentas foi escolhido para capturar os frames de vídeo devido à sua facilidade de uso e documentação.
+- **ReactJS** foi escolhido para o frontend devido à sua facilidade de uso.
