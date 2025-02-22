@@ -29,7 +29,7 @@ git clone https://github.com/jpedro058/BRNDTS-chall
 2️⃣ **Instalar as Dependências**
 
 ```bash
-cd video-frame-capture/backend
+cd BRNDTS-challe/backend
 npm install
 cd ../frontend
 npm install
@@ -45,7 +45,7 @@ npm start
 4️⃣ **Executar o Frontend**
 
 ```bash
-cd web
+cd frontend
 npm run dev
 ```
 
